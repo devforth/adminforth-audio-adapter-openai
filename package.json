@@ -1,0 +1,65 @@
+{
+  "name": "@adminforth/audio-adapter-openai",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "homepage": "https://adminforth.dev/docs/tutorial/Adapters/audio-adapter-openai/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/devforth/adminforth-audio-adapter-openai.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "keywords": [
+    "adminforth",
+    "audio",
+    "speech-to-text",
+    "text-to-speech",
+    "openai"
+  ],
+  "author": "DevForth (https://devforth.io)",
+  "license": "MIT",
+  "description": "AdminForth audio adapter for OpenAI speech-to-text and text-to-speech.",
+  "dependencies": {
+    "openai": "^6.34.0"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "semantic-release": "^24.2.1",
+    "semantic-release-slack-bot": "^4.0.2",
+    "typescript": "^5.9.3"
+  },
+  "release": {
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/npm",
+      "@semantic-release/github",
+      [
+        "semantic-release-slack-bot",
+        {
+          "packageName": "@adminforth/audio-adapter-openai",
+          "notifyOnSuccess": true,
+          "notifyOnFail": true,
+          "slackIcon": ":package:",
+          "markdownReleaseNotes": true
+        }
+      ]
+    ],
+    "branches": [
+      "main",
+      {
+        "name": "next",
+        "prerelease": true
+      }
+    ]
+  },
+  "peerDependencies": {
+    "adminforth": "^2.24.0"
+  }
+}
