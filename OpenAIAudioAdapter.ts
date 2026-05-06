@@ -63,7 +63,7 @@ export class OpenAIAudioAdapter
 {
   public readonly name = "openai";
 
-  private readonly client: OpenAI;
+  private client?: OpenAI;
   private readonly transcriptionModel: OpenAITranscriptionModel;
   private readonly speechModel: OpenAISpeechModel;
   private readonly defaultVoice: OpenAITtsVoice;
@@ -75,11 +75,7 @@ export class OpenAIAudioAdapter
   constructor(options: OpenAIAudioAdapterOptions = {}) {
     this.apiKey = options.apiKey ?? process.env.OPENAI_API_KEY;
     this.hasCustomClient = Boolean(options.client);
-    this.client =
-      options.client ??
-      new OpenAI({
-        apiKey: this.apiKey,
-      });
+    this.client = options.client;
     this.transcriptionModel =
       options.transcriptionModel ?? "gpt-4o-mini-transcribe";
     this.speechModel = options.speechModel ?? "gpt-4o-mini-tts";
@@ -95,6 +91,14 @@ export class OpenAIAudioAdapter
     }
   }
 
+  private getClient(): OpenAI {
+    this.validate();
+    this.client ??= new OpenAI({
+      apiKey: this.apiKey,
+    });
+    return this.client;
+  }
+
   async transcribe(input: SpeechToTextInput): Promise<SpeechToTextResult> {
     this.validateAudioInput(input);
 
@@ -102,7 +106,7 @@ export class OpenAIAudioAdapter
       type: input.mimeType,
     });
     const language = input.language === "auto" ? undefined : input.language;
-    const result = await this.client.audio.transcriptions.create({
+    const result = await this.getClient().audio.transcriptions.create({
       model: this.transcriptionModel,
       file,
       language,
@@ -129,7 +133,7 @@ export class OpenAIAudioAdapter
 
     const format = input.format ?? this.defaultAudioFormat;
     const streamFormat = input.stream ? input.streamFormat ?? "audio" : undefined;
-    const response = await this.client.audio.speech.create({
+    const response = await this.getClient().audio.speech.create({
       model: this.speechModel,
       voice: input.voice ?? this.defaultVoice,
       input: text,
