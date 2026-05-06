@@ -112,6 +112,8 @@ export class OpenAIAudioAdapter
       language,
       prompt: input.prompt,
       response_format: "json",
+    }, {
+      signal: input.abortSignal,
     });
 
     return {
@@ -141,6 +143,8 @@ export class OpenAIAudioAdapter
       speed: input.speed,
       instructions: input.instructions,
       stream_format: streamFormat,
+    }, {
+      signal: input.abortSignal,
     });
 
     if (input.stream) {
