@@ -29,6 +29,7 @@ export type OpenAIAudioAdapterOptions = {
   speechModel?: OpenAISpeechModel;
   defaultVoice?: OpenAITtsVoice;
   defaultAudioFormat?: TtsAudioFormat;
+  defaultSpeed?: number;
   maxAudioFileSizeBytes?: number;
 };
 
@@ -68,6 +69,7 @@ export class OpenAIAudioAdapter
   private readonly speechModel: OpenAISpeechModel;
   private readonly defaultVoice: OpenAITtsVoice;
   private readonly defaultAudioFormat: TtsAudioFormat;
+  private readonly defaultSpeed?: number;
   private readonly maxAudioFileSizeBytes: number;
   private readonly apiKey?: string;
   private readonly hasCustomClient: boolean;
@@ -79,8 +81,9 @@ export class OpenAIAudioAdapter
     this.transcriptionModel =
       options.transcriptionModel ?? "gpt-4o-mini-transcribe";
     this.speechModel = options.speechModel ?? "gpt-4o-mini-tts";
-    this.defaultVoice = options.defaultVoice ?? "coral";
+    this.defaultVoice = options.defaultVoice ?? "alloy";
     this.defaultAudioFormat = options.defaultAudioFormat ?? "mp3";
+    this.defaultSpeed = options.defaultSpeed ?? 1.0;
     this.maxAudioFileSizeBytes =
       options.maxAudioFileSizeBytes ?? DEFAULT_MAX_AUDIO_FILE_SIZE_BYTES;
   }
@@ -140,7 +143,7 @@ export class OpenAIAudioAdapter
       voice: input.voice ?? this.defaultVoice,
       input: text,
       response_format: format,
-      speed: input.speed,
+      speed: input.speed ?? this.defaultSpeed,
       instructions: input.instructions,
       stream_format: streamFormat,
     }, {
