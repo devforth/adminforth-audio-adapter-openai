@@ -59,6 +59,12 @@ const MIME_TYPE_BY_TTS_FORMAT: Record<TtsAudioFormat, string> = {
   pcm: "audio/pcm",
 };
 
+function throwIfAborted(abortSignal?: AbortSignal): void {
+  if (abortSignal?.aborted) {
+    throw new DOMException("This operation was aborted", "AbortError");
+  }
+}
+
 export class OpenAIAudioAdapter
   implements SpeechToTextAdapter, TextToSpeechAdapter
 {
@@ -104,6 +110,7 @@ export class OpenAIAudioAdapter
 
   async transcribe(input: SpeechToTextInput): Promise<SpeechToTextResult> {
     this.validateAudioInput(input);
+    throwIfAborted(input.abortSignal);
 
     const file = await toFile(input.buffer, input.filename, {
       type: input.mimeType,
@@ -135,6 +142,8 @@ export class OpenAIAudioAdapter
     if (!text) {
       throw new Error("TTS input text is empty");
     }
+
+    throwIfAborted(input.abortSignal);
 
     const format = input.format ?? this.defaultAudioFormat;
     const streamFormat = input.stream ? input.streamFormat ?? "audio" : undefined;
