@@ -8,6 +8,7 @@
     "type": "git",
     "url": "https://github.com/devforth/adminforth-audio-adapter-openai.git"
   },
+  "homepage": "https://adminforth.dev/docs/tutorial/Plugins/agent/#turn-on-audio-chat-support",
   "publishConfig": {
     "access": "public"
   },
