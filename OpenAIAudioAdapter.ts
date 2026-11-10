@@ -13,6 +13,8 @@ import type {
 } from "./audioAdapters.js";
 //redeploy
 export type OpenAITranscriptionModel =
+  | "gpt-transcribe"
+  // deprecated by OpenAI, shut down on 2027-02-26
   | "gpt-4o-transcribe"
   | "gpt-4o-mini-transcribe"
   | "whisper-1";
@@ -85,7 +87,7 @@ export class OpenAIAudioAdapter
     this.hasCustomClient = Boolean(options.client);
     this.client = options.client;
     this.transcriptionModel =
-      options.transcriptionModel ?? "gpt-4o-mini-transcribe";
+      options.transcriptionModel ?? "gpt-transcribe";
     this.speechModel = options.speechModel ?? "gpt-4o-mini-tts";
     this.defaultVoice = options.defaultVoice ?? "alloy";
     this.defaultAudioFormat = options.defaultAudioFormat ?? "mp3";
@@ -119,7 +121,10 @@ export class OpenAIAudioAdapter
     const result = await this.getClient().audio.transcriptions.create({
       model: this.transcriptionModel,
       file,
-      language,
+      // gpt-transcribe takes a list of possible languages instead of one language
+      ...(this.transcriptionModel === "gpt-transcribe"
+        ? { languages: language ? [language] : undefined }
+        : { language }),
       prompt: input.prompt,
       response_format: "json",
     }, {
@@ -128,6 +133,7 @@ export class OpenAIAudioAdapter
 
     return {
       text: result.text.trim(),
+      language: result.languages?.[0]?.code,
       raw: result,
     };
   }
