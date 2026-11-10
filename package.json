@@ -26,7 +26,7 @@
   "license": "MIT",
   "description": "AdminForth audio adapter for OpenAI speech-to-text and text-to-speech.",
   "dependencies": {
-    "openai": "^6.34.0"
+    "openai": "^7.53.0"
   },
   "devDependencies": {
     "@types/node": "latest",
